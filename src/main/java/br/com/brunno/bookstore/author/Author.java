@@ -30,6 +30,6 @@ public class Author {
     private String description;
 
     @Column(nullable = false)
-    private LocalDateTime registrationInstant;
+    private LocalDateTime registrationInstant = LocalDateTime.now();
 
 }
