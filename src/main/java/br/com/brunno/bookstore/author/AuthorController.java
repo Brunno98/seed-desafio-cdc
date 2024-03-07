@@ -1,5 +1,8 @@
 package br.com.brunno.bookstore.author;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,18 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/author")
 public class AuthorController {
 
-    private final AuthorRepository authorRepository;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Autowired
-    public AuthorController(AuthorRepository authorRepository) {
-        this.authorRepository = authorRepository;
+    public AuthorController(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
+    @Transactional
     @PostMapping
     public ResponseEntity<CreateAuthorResponse> createAuthor(@RequestBody @Valid CreateAuthorRequest createRequest) {
         Author author = createRequest.toDomain();
 
-        authorRepository.save(author);
+        entityManager.persist(author);
 
         CreateAuthorResponse response = CreateAuthorResponse.from(author) ;
 
