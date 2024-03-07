@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 @RequiredArgsConstructor
 public class CreateAuthorRequest {
 
-    @NotBlank
+//    @NotBlank
     private final String name;
 
     @NotBlank
@@ -20,10 +20,6 @@ public class CreateAuthorRequest {
     private final String description;
 
     public Author toDomain() {
-        Author author = new Author();
-        author.setName(name);
-        author.setEmail(email);
-        author.setDescription(description);
-        return author;
+        return new Author(name, email, description);
     }
 }

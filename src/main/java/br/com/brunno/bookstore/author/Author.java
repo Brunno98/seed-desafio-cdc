@@ -5,9 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -31,5 +32,11 @@ public class Author {
 
     @Column(nullable = false)
     private LocalDateTime registrationInstant = LocalDateTime.now();
+
+    public Author(String name, String email, String description) {
+        this.name = name;
+        this.email = email;
+        this.description = description;
+    }
 
 }
