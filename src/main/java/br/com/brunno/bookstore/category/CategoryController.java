@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final EntityManager entityManager;
-    private final UniqueCategoryNameValidator uniqueCategoryNameValidator;
-
-    @InitBinder
-    public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(uniqueCategoryNameValidator);
-    }
 
     @Transactional
     @PostMapping

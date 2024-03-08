@@ -1,5 +1,6 @@
 package br.com.brunno.bookstore.author;
 
+import br.com.brunno.bookstore.shared.UniqueValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class CreateAuthorRequest {
 
     @NotBlank
     @Email
+    @UniqueValue(domainClass = Author.class, fieldName = "email")
     private final String email;
 
     @NotBlank

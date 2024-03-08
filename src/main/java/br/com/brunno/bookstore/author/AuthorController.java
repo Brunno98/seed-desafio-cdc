@@ -19,17 +19,10 @@ public class AuthorController {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final UniqueEmailValidator uniqueEmailValidator;
 
     @Autowired
-    public AuthorController(EntityManager entityManager, UniqueEmailValidator uniqueEmailValidator) {
+    public AuthorController(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.uniqueEmailValidator = uniqueEmailValidator;
-    }
-
-    @InitBinder
-    public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(uniqueEmailValidator);
     }
 
     @Transactional
