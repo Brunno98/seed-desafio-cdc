@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/book")
-public class BookController {
+public class CreateBookController {
 
     @PersistenceContext
     private final EntityManager entityManager;
