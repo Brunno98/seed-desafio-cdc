@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
@@ -27,6 +29,14 @@ public class AuthorController {
     @PostMapping
     public ResponseEntity<CreateAuthorResponse> createAuthor(@RequestBody @Valid CreateAuthorRequest createRequest) {
         Author author = createRequest.toDomain();
+
+        List resultList = entityManager.createQuery("FROM Author a WHERE UPPER(a.email) = UPPER(:email)")
+                .setParameter("email", author.getEmail())
+                .getResultList();
+
+        if (!resultList.isEmpty()) {
+            throw new IllegalArgumentException("Email " + author.getEmail() + " already exits");
+        }
 
         entityManager.persist(author);
 

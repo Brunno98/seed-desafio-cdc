@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 @RequiredArgsConstructor
 public class CreateAuthorRequest {
 
-//    @NotBlank
+    @NotBlank
     private final String name;
 
     @NotBlank
