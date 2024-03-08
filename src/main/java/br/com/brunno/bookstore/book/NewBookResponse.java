@@ -12,7 +12,7 @@ public class NewBookResponse {
     private String title;
     private String digest;
     private String summary;
-    private String price;
+    private double price;
     private int numberOfPages;
     private String isbn;
     private LocalDate publishDate;
@@ -25,7 +25,7 @@ public class NewBookResponse {
                 book.getTitle(),
                 book.getDigest(),
                 book.getSummary(),
-                book.getPrice().toPlainString(),
+                book.getPrice().doubleValue(),
                 book.getNumberOfPages(),
                 book.getIsbn(),
                 book.getPublishDate(),
