@@ -2,9 +2,11 @@ package br.com.brunno.bookstore.author;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+@Getter
 @RequiredArgsConstructor
 public class CreateAuthorRequest {
 
