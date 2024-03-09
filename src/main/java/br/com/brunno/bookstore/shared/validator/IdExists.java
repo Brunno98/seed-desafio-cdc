@@ -1,4 +1,4 @@
-package br.com.brunno.bookstore.shared;
+package br.com.brunno.bookstore.shared.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -11,18 +11,17 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@Constraint(validatedBy = {UniqueValueValidator.class})
+@Constraint(validatedBy = IdExistsValidator.class)
 @Target({FIELD})
 @Retention(RUNTIME)
-public @interface UniqueValue {
+public @interface IdExists {
 
-    String message() default "Value already exists!";
+    String message() default "does not exits";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String fieldName();
+    Class<?> domain();
 
-    Class<?> domainClass();
 }

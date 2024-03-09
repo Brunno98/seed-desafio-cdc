@@ -1,6 +1,6 @@
 package br.com.brunno.bookstore.country;
 
-import br.com.brunno.bookstore.shared.UniqueValue;
+import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import lombok.Getter;
 
 @Getter

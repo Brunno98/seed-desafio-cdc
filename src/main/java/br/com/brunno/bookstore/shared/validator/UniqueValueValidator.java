@@ -1,5 +1,6 @@
-package br.com.brunno.bookstore.shared;
+package br.com.brunno.bookstore.shared.validator;
 
+import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintValidator;

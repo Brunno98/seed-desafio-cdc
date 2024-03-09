@@ -1,6 +1,6 @@
 package br.com.brunno.bookstore.author;
 
-import br.com.brunno.bookstore.shared.UniqueValue;
+import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

@@ -2,7 +2,8 @@ package br.com.brunno.bookstore.book;
 
 import br.com.brunno.bookstore.author.Author;
 import br.com.brunno.bookstore.category.Category;
-import br.com.brunno.bookstore.shared.UniqueValue;
+import br.com.brunno.bookstore.shared.validator.IdExists;
+import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
@@ -41,9 +42,11 @@ public class NewBookRequest {
     private LocalDate publishDate;
 
     @NotNull
+    @IdExists(domain = Category.class)
     private Long categoryId;
 
     @NotNull
+    @IdExists(domain = Author.class)
     private Long authorId;
 
     public Book toDomain(EntityManager entityManager) {

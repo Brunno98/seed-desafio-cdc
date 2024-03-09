@@ -1,7 +1,8 @@
 package br.com.brunno.bookstore.state;
 
 import br.com.brunno.bookstore.country.Country;
-import br.com.brunno.bookstore.shared.UniqueValue;
+import br.com.brunno.bookstore.shared.validator.IdExists;
+import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ public class NewStateRequest {
 
     @NotNull
     @Positive
+    @IdExists(domain = Country.class)
     private Long countryId;
 
     public State toDomain(EntityManager entityManager) {
