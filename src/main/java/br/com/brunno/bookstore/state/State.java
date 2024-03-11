@@ -20,6 +20,9 @@ public class State {
     @ManyToOne(fetch = FetchType.LAZY)
     private Country country;
 
+    @Deprecated
+    public State() {}
+
     public State(String name, Country country) {
         this.name = name;
         this.country = country;
