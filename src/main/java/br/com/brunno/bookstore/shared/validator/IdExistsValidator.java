@@ -20,6 +20,7 @@ public class IdExistsValidator implements ConstraintValidator<IdExists, Object> 
 
     @Override
     public boolean isValid(Object target, ConstraintValidatorContext context) {
+        if (target == null) return true;
         Object result = entityManager.find(domainClass, target);
         return result != null;
     }
