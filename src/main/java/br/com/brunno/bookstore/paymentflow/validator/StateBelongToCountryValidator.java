@@ -1,7 +1,7 @@
 package br.com.brunno.bookstore.paymentflow.validator;
 
 import br.com.brunno.bookstore.country.Country;
-import br.com.brunno.bookstore.paymentflow.BuyerDetailsRequest;
+import br.com.brunno.bookstore.paymentflow.PaymentRequest;
 import br.com.brunno.bookstore.state.State;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ public class StateBelongToCountryValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return BuyerDetailsRequest.class.isAssignableFrom(clazz);
+        return PaymentRequest.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
         if (errors.hasErrors()) return;
 
-        BuyerDetailsRequest request = (BuyerDetailsRequest) target;
+        PaymentRequest request = (PaymentRequest) target;
 
         State state = entityManager.find(State.class, request.getStateId());
         Country country = entityManager.find(Country.class, request.getCountryId());

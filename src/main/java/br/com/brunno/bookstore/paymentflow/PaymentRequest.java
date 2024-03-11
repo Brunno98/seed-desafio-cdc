@@ -4,15 +4,21 @@ import br.com.brunno.bookstore.country.Country;
 import br.com.brunno.bookstore.shared.validator.Document;
 import br.com.brunno.bookstore.shared.validator.IdExists;
 import br.com.brunno.bookstore.state.State;
+import jakarta.persistence.EntityManager;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 @ToString
 @Getter
-public class BuyerDetailsRequest {
+public class PaymentRequest {
 
     @NotBlank
     @Email
@@ -50,4 +56,30 @@ public class BuyerDetailsRequest {
     @IdExists(domain = State.class)
     private Long stateId;
 
+    @NotNull
+    @Positive
+    private Integer total;
+
+    @Size(min = 1)
+    private List<@Valid CartItem> items;
+
+    public Payment toDomain(EntityManager entityManager) {
+        Country country = entityManager.find(Country.class, countryId);
+        State state = entityManager.find(State.class, stateId);
+        return new Payment(
+                email,
+                name,
+                lastName,
+                document,
+                address,
+                adjunct,
+                city,
+                phoneNumber,
+                cep,
+                country,
+                state,
+                total,
+                items
+        );
+    }
 }
