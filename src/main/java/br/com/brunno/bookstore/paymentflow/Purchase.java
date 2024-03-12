@@ -1,7 +1,9 @@
 package br.com.brunno.bookstore.paymentflow;
 
 import br.com.brunno.bookstore.country.Country;
+import br.com.brunno.bookstore.coupon.Coupon;
 import br.com.brunno.bookstore.state.State;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +42,8 @@ public class Purchase {
     private State state;
 
     private Order order;
+
+    private AppliedCoupon appliedCoupon;
 
     @Deprecated
     public Purchase() {}
@@ -113,6 +117,7 @@ public class Purchase {
         return this.country.getName();
     }
 
+    @Nullable
     public String getStateName() {
         if (this.state == null) return null;
         return this.state.getName();
@@ -125,5 +130,18 @@ public class Purchase {
     public void setState(State state) {
         Assert.state(state.belongTo(country), "state must belong to country in purchase");
         this.state = state;
+    }
+
+    @Nullable
+    public AppliedCoupon getAppliedCoupon() {
+        return this.appliedCoupon;
+    }
+
+    public void applyCoupon(Coupon coupon) {
+        this.appliedCoupon = new AppliedCoupon(coupon);
+    }
+
+    public boolean hasAppliedCoupon() {
+        return appliedCoupon != null;
     }
 }

@@ -1,6 +1,8 @@
 package br.com.brunno.bookstore.paymentflow;
 
 import br.com.brunno.bookstore.country.Country;
+import br.com.brunno.bookstore.coupon.Coupon;
+import br.com.brunno.bookstore.coupon.CouponRepository;
 import br.com.brunno.bookstore.shared.validator.Document;
 import br.com.brunno.bookstore.shared.validator.IdExists;
 import br.com.brunno.bookstore.state.State;
@@ -11,6 +13,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 @ToString
 @Getter
@@ -56,7 +62,10 @@ public class NewPurchaseRequest {
     @Valid
     private Order order;
 
-    public Purchase toDomain(EntityManager entityManager) {
+
+    private String coupon;
+
+    public Purchase toDomain(EntityManager entityManager, CouponRepository couponRepository) {
         Country country = entityManager.find(Country.class, countryId);
         Purchase purchase = new Purchase(
                 email,
@@ -75,6 +84,17 @@ public class NewPurchaseRequest {
             State state = entityManager.find(State.class, stateId);
             purchase.setState(state);
         }
+
+        if (StringUtils.hasText(coupon)) {
+            Optional<Coupon> optionalCoupon = couponRepository.findByCode(coupon);
+            Assert.state(optionalCoupon.isPresent(), "Should not be possible to convert purchaseRequest to domain with inexistent coupon code");
+            purchase.applyCoupon(optionalCoupon.get());
+        }
+
         return purchase;
+    }
+
+    public boolean hasCoupon() {
+        return coupon != null && !coupon.isBlank();
     }
 }

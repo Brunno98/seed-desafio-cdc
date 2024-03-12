@@ -1,5 +1,7 @@
 package br.com.brunno.bookstore.paymentflow;
 
+import br.com.brunno.bookstore.coupon.CouponRepository;
+import br.com.brunno.bookstore.paymentflow.validator.CouponValidator;
 import br.com.brunno.bookstore.paymentflow.validator.StateBelongToCountryValidator;
 import br.com.brunno.bookstore.paymentflow.validator.TotalMatchCartItemsValidator;
 import jakarta.persistence.EntityManager;
@@ -23,19 +25,22 @@ public class PurchaseController {
 
     private final StateBelongToCountryValidator stateBelongToCountryValidator;
     private final TotalMatchCartItemsValidator totalMatchCartItemsValidator;
+    private final CouponValidator couponValidator;
     private final EntityManager entityManager;
+    private final CouponRepository couponRepository;
 
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(stateBelongToCountryValidator);
         webDataBinder.addValidators(totalMatchCartItemsValidator);
+        webDataBinder.addValidators(couponValidator);
     }
 
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/purchase")
     public String createPurchase(@RequestBody @Valid NewPurchaseRequest newPurchaseRequest) {
-        Purchase purchase = newPurchaseRequest.toDomain(entityManager);
+        Purchase purchase = newPurchaseRequest.toDomain(entityManager, couponRepository);
         entityManager.persist(purchase);
         return "/purchase/" + purchase.getId();
     }

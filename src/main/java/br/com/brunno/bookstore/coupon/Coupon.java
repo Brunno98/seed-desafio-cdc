@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 @Getter
@@ -34,5 +35,11 @@ public class Coupon {
         this.code = code;
         this.discount = discount;
         this.expirationDate = expirationDate;
+    }
+
+    public boolean isExpired() {
+        LocalDate now = LocalDate.now();
+
+        return now.isAfter(expirationDate) || now.isEqual(expirationDate);
     }
 }

@@ -1,6 +1,7 @@
 package br.com.brunno.bookstore.paymentflow;
 
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 @Getter
 public class PurchaseDetailsResponse {
@@ -17,6 +18,7 @@ public class PurchaseDetailsResponse {
     private String countryName;
     private String stateName;
     private Order order;
+    private AppliedCouponDetails coupon;
 
     public PurchaseDetailsResponse(Purchase purchase) {
         this.id = purchase.getId();
@@ -32,5 +34,9 @@ public class PurchaseDetailsResponse {
         this.countryName = purchase.getCountryName();
         this.stateName = purchase.getStateName();
         this.order = purchase.getOrder();
+        if (purchase.hasAppliedCoupon()){
+            Assert.notNull(purchase.getAppliedCoupon(), "getAppliedCoupon() should not be null because hasAppliedCoupon() was returned true.");
+            this.coupon = new AppliedCouponDetails(purchase.getAppliedCoupon());
+        }
     }
 }
