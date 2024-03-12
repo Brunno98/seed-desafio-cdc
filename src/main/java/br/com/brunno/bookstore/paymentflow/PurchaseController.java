@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @RestController
-public class PaymentController {
+public class PurchaseController {
 
     private final StateBelongToCountryValidator stateBelongToCountryValidator;
     private final TotalMatchCartItemsValidator totalMatchCartItemsValidator;
@@ -33,17 +33,21 @@ public class PaymentController {
 
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/payment")
-    public String generatePayment(@RequestBody @Valid PaymentRequest paymentRequest) {
-        Payment payment = paymentRequest.toDomain(entityManager);
-        entityManager.persist(payment);
-        return "/payment/" + payment.getId();
+    @PostMapping("/purchase")
+    public String createPurchase(@RequestBody @Valid NewPurchaseRequest newPurchaseRequest) {
+        Purchase purchase = newPurchaseRequest.toDomain(entityManager);
+        entityManager.persist(purchase);
+        return "/purchase/" + purchase.getId();
     }
 
-    @GetMapping("/payment/{id}")
-    public PaymentDetailsResponse getPaymentDetails(@PathVariable String id) {
-        Payment payment = entityManager.find(Payment.class, id);
+    @GetMapping("/purchase/{id}")
+    public PurchaseDetailsResponse getPurchaseDetails(@PathVariable String id) {
+        Purchase purchase = entityManager.find(Purchase.class, id);
 
-        return new PaymentDetailsResponse(payment);
+        if (purchase == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return new PurchaseDetailsResponse(purchase);
     }
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Embeddable
 @Getter
-public class CartItem {
+public class OrderItem {
     @NotNull
     @IdExists(domain = Book.class)
     private Integer bookId;

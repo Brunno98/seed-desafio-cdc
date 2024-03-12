@@ -9,16 +9,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.List;
+import org.springframework.util.Assert;
 
 @ToString
 @Getter
-public class PaymentRequest {
+public class NewPurchaseRequest {
 
     @NotBlank
     @Email
@@ -57,16 +54,12 @@ public class PaymentRequest {
     private Long stateId;
 
     @NotNull
-    @Positive
-    private Integer total;
+    @Valid
+    private Order order;
 
-    @Size(min = 1)
-    private List<@Valid CartItem> items;
-
-    public Payment toDomain(EntityManager entityManager) {
+    public Purchase toDomain(EntityManager entityManager) {
         Country country = entityManager.find(Country.class, countryId);
-        State state = entityManager.find(State.class, stateId);
-        return new Payment(
+        Purchase purchase = new Purchase(
                 email,
                 name,
                 lastName,
@@ -77,9 +70,12 @@ public class PaymentRequest {
                 phoneNumber,
                 cep,
                 country,
-                state,
-                total,
-                items
+                order
         );
+        if (country.hasState()) {
+            State state = entityManager.find(State.class, stateId);
+            purchase.setState(state);
+        }
+        return purchase;
     }
 }

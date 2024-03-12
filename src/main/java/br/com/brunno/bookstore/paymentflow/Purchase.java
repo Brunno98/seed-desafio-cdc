@@ -8,12 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.util.Assert;
 
 @Entity
-public class Payment {
+public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -42,15 +40,12 @@ public class Payment {
     @ManyToOne
     private State state;
 
-    private Integer total;
-
-    @ElementCollection
-    private List<CartItem> items;
+    private Order order;
 
     @Deprecated
-    public Payment() {}
+    public Purchase() {}
 
-    public Payment(
+    public Purchase(
             String email,
             String name,
             String lastName,
@@ -61,9 +56,7 @@ public class Payment {
             String phoneNumber,
             String cep,
             Country country,
-            State state,
-            Integer total,
-            List<CartItem> cartItems) {
+            Order order) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
@@ -74,9 +67,7 @@ public class Payment {
         this.phoneNumber = phoneNumber;
         this.cep = cep;
         this.country = country;
-        this.state = state;
-        this.total = total;
-        this.items = cartItems;
+        this.order = order;
     }
 
     public String getId() {
@@ -119,14 +110,6 @@ public class Payment {
         return cep;
     }
 
-    public Integer getTotal() {
-        return total;
-    }
-
-    public List<CartItem> getItems() {
-        return new ArrayList<>(items);
-    }
-
     public String getCountryName() {
         return this.country.getName();
     }
@@ -134,5 +117,14 @@ public class Payment {
     public String getStateName() {
         if (this.state == null) return null;
         return this.state.getName();
+    }
+
+    public Order getOrder() {
+        return this.order;
+    }
+
+    public void setState(State state) {
+        Assert.state(state.belongTo(country), "state must belong to country in purchase");
+        this.state = state;
     }
 }
