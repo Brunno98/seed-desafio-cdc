@@ -138,6 +138,8 @@ public class Purchase {
     }
 
     public void applyCoupon(Coupon coupon) {
+        Assert.notNull(coupon, "Cannot apply to purchaes a null as cupon");
+        Assert.isTrue(!this.hasAppliedCoupon(), "Purchases with applied cupon should not apply other");
         this.appliedCoupon = new AppliedCoupon(coupon);
     }
 
