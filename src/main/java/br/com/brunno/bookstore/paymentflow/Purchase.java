@@ -2,7 +2,6 @@ package br.com.brunno.bookstore.paymentflow;
 
 import br.com.brunno.bookstore.country.Country;
 import br.com.brunno.bookstore.state.State;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
