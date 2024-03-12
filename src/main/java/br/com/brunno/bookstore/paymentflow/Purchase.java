@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
+
 @Entity
 public class Purchase {
     @Id
@@ -145,5 +147,24 @@ public class Purchase {
 
     public boolean hasAppliedCoupon() {
         return appliedCoupon != null;
+    }
+
+    public BigDecimal getOrinalValue() {
+        Assert.notNull(order, "Purchase doesn't have order to get value from");
+        return order.getTotal();
+    }
+
+    public BigDecimal getFinalValue() {
+        BigDecimal orinalValue = getOrinalValue();
+        if (!hasAppliedCoupon()) return orinalValue;
+
+        BigDecimal discount = orinalValue.multiply(BigDecimal.valueOf(getDiscount()));
+
+        return orinalValue.subtract(discount);
+    }
+
+    private double getDiscount() {
+        Assert.notNull(appliedCoupon, "Cannot get a discount from purchase that doesn't have applied cupon");
+        return this.appliedCoupon.getAppliedDiscount();
     }
 }

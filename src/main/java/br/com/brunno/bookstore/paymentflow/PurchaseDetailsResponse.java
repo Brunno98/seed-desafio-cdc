@@ -3,6 +3,8 @@ package br.com.brunno.bookstore.paymentflow;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
+
 @Getter
 public class PurchaseDetailsResponse {
     private String id;
@@ -18,7 +20,10 @@ public class PurchaseDetailsResponse {
     private String countryName;
     private String stateName;
     private Order order;
+    private boolean appliedCupon;
     private AppliedCouponDetails coupon;
+    private BigDecimal originalValue;
+    private BigDecimal finalValue;
 
     public PurchaseDetailsResponse(Purchase purchase) {
         this.id = purchase.getId();
@@ -34,9 +39,13 @@ public class PurchaseDetailsResponse {
         this.countryName = purchase.getCountryName();
         this.stateName = purchase.getStateName();
         this.order = purchase.getOrder();
-        if (purchase.hasAppliedCoupon()){
+        this.originalValue = purchase.getOrinalValue();
+
+        this.appliedCupon = purchase.hasAppliedCoupon();
+        if (this.appliedCupon){
             Assert.notNull(purchase.getAppliedCoupon(), "getAppliedCoupon() should not be null because hasAppliedCoupon() was returned true.");
             this.coupon = new AppliedCouponDetails(purchase.getAppliedCoupon());
+            this.finalValue = purchase.getFinalValue();
         }
     }
 }

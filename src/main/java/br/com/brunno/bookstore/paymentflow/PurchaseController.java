@@ -10,14 +10,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,16 +40,5 @@ public class PurchaseController {
         Purchase purchase = newPurchaseRequest.toDomain(entityManager, couponRepository);
         entityManager.persist(purchase);
         return "/purchase/" + purchase.getId();
-    }
-
-    @GetMapping("/purchase/{id}")
-    public PurchaseDetailsResponse getPurchaseDetails(@PathVariable String id) {
-        Purchase purchase = entityManager.find(Purchase.class, id);
-
-        if (purchase == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        return new PurchaseDetailsResponse(purchase);
     }
 }
