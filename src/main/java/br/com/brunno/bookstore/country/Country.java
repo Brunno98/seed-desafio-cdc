@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +39,8 @@ public class Country {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        Assert.notNull(name, "Country should have a name when equals verify");
         Country country = (Country) o;
-        return Objects.equals(name, country.name);
-    }
-
-    public boolean hasState() {
-        return !states.isEmpty();
+        return name.equalsIgnoreCase(country.name);
     }
 }
