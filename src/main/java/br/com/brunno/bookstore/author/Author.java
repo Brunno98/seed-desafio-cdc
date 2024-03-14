@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,12 +32,13 @@ public class Author {
     private String description;
 
     @Column(nullable = false)
-    private LocalDateTime registrationInstant = LocalDateTime.now();
+    private LocalDateTime registrationInstant;
 
-    public Author(String name, String email, String description) {
+    public Author(String name, String email, String description, Clock clock) {
         this.name = name;
         this.email = email;
         this.description = description;
+        this.registrationInstant = LocalDateTime.now(clock);
     }
 
 }

@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.Clock;
+
 @Getter
 @RequiredArgsConstructor
 public class CreateAuthorRequest {
@@ -23,7 +25,7 @@ public class CreateAuthorRequest {
     @Length(max = 400)
     private final String description;
 
-    public Author toDomain() {
-        return new Author(name, email, description);
+    public Author toDomain(Clock clock) {
+        return new Author(name, email, description, clock);
     }
 }

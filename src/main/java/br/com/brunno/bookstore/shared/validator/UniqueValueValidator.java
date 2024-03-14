@@ -1,18 +1,17 @@
 package br.com.brunno.bookstore.shared.validator;
 
-import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.util.Assert;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Object> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     private String domainAttribute;
     private Class<?> klass;

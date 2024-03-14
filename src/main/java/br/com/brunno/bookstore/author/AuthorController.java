@@ -13,22 +13,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Clock;
+
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
 
-    @PersistenceContext
     private final EntityManager entityManager;
+    private final Clock clock;
 
     @Autowired
-    public AuthorController(EntityManager entityManager) {
+    public AuthorController(EntityManager entityManager, Clock clock) {
         this.entityManager = entityManager;
+        this.clock = clock;
     }
 
     @Transactional
     @PostMapping
     public ResponseEntity<CreateAuthorResponse> createAuthor(@RequestBody @Valid CreateAuthorRequest createRequest) {
-        Author author = createRequest.toDomain();
+        Author author = createRequest.toDomain(clock);
 
         entityManager.persist(author);
 
