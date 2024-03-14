@@ -43,4 +43,8 @@ public class Country {
         Country country = (Country) o;
         return name.equalsIgnoreCase(country.name);
     }
+
+    public boolean hasState() {
+        return !states.isEmpty();
+    }
 }

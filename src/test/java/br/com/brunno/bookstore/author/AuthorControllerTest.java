@@ -3,7 +3,17 @@ package br.com.brunno.bookstore.author;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Label;
+import net.jqwik.api.Property;
+import net.jqwik.api.constraints.AlphaChars;
+import net.jqwik.api.constraints.StringLength;
+import net.jqwik.api.lifecycle.BeforeContainer;
+import net.jqwik.api.lifecycle.BeforeExample;
+import net.jqwik.api.lifecycle.BeforeProperty;
+import net.jqwik.spring.JqwikSpringSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,12 +34,15 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@JqwikSpringSupport
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,6 +51,8 @@ public class AuthorControllerTest {
     public static final String NAME = "foo";
     public static final String EMAIL = "foo@email.com";
     public static final String DESCRIPTION = "some description";
+
+    private final Set<String> emailsUsed = new HashSet<>();
 
     @Autowired
     MockMvc mockMvc;
@@ -54,22 +69,29 @@ public class AuthorControllerTest {
         Mockito.when(clock.instant()).thenReturn(Instant.parse("2024-03-14T14:50:12.123Z"));
     }
 
-    @DisplayName("Quando criar um author deve-se retornar 200 e o author criado")
-    @Test
-    void test1() throws Exception {
+    @Property(tries = 100)
+    @Label("Quando criar um author deve-se retornar 200 e o author criado")
+    void test1(@ForAll @StringLength(min = 10, max = 255) @AlphaChars String name,
+               @ForAll @StringLength(value = 50) @AlphaChars String email,
+               @ForAll @StringLength(min = 10, max = 400) @AlphaChars String description) throws Exception {
+        Assumptions.assumeTrue(emailsUsed.add(email));
+
+        Mockito.when(clock.getZone()).thenReturn(ZoneId.of("America/Sao_Paulo"));
+        Mockito.when(clock.instant()).thenReturn(Instant.parse("2024-03-14T14:50:12.123Z"));
+        String payload = new ObjectMapper()
+                .writeValueAsString(Map.of("name", name,
+                        "email", email + "@email.com",
+                        "description", description));
+
         mockMvc.perform(post("/author")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(Map.of(
-                        "name", NAME,
-                        "email", EMAIL,
-                        "description", DESCRIPTION)
-                )))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("id").value(1),
-                        jsonPath("name").value("foo"),
-                        jsonPath("email").value("foo@email.com"),
-                        jsonPath("description").value("some description"),
+                        jsonPath("id").isNumber(),
+                        jsonPath("name").value(name),
+                        jsonPath("email").value(email + "@email.com"),
+                        jsonPath("description").value(description),
                         jsonPath("registrationInstant").value("2024-03-14T11:50:12.123")
                 );
 
@@ -79,16 +101,14 @@ public class AuthorControllerTest {
     @ParameterizedTest
     @CsvSource(value = {"name","email","description"})
     void test2(String requiredField) throws Exception {
-        Map<String, String> body = new HashMap<>(Map.of(
+        Map<String, String> payload = new HashMap<>(Map.of(
                 "name", NAME,
                 "email", EMAIL,
                 "description", DESCRIPTION));
-        body.remove(requiredField);
+        payload.remove(requiredField);
         mockMvc.perform(post("/author")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                new ObjectMapper().writeValueAsString(body)
-                        )
+                        .content(new ObjectMapper().writeValueAsString(payload))
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -109,16 +129,15 @@ public class AuthorControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("Descrição não pode ser maior que 400 caracteres")
-    @Test
-    void test4() throws Exception{
-        String bigDescription = "Inthecenterofthebusycity,farfromtherushandnoise,thereliesahiddengardenwherepeaceandserenityabound.Beneaththeshadysycamores,whispersoftleavesandbirdsongsserenadevisitors,offeringasafehavenfromthetumultofurbanlife.Withineachpetal,asecretgardenoftranquilityawaits,atimelessoasisamidstthefrenzyofmodernity.Inthecenterofthebusycity,farfromtherushandnoise,thereliesahiddengardenwherepeaceandserenityabound.B";
+    @Label("Descrição não pode ser maior que 400 caracteres")
+    @Property(tries = 20)
+    void test4(@ForAll @AlphaChars @StringLength(min = 401, max = 600) String description) throws Exception{
         mockMvc.perform(post("/author")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(Map.of(
                                 "name", NAME,
                                 "email", EMAIL,
-                                "description", bigDescription)
+                                "description", description)
                         )))
                 .andExpect(status().isBadRequest());
     }
