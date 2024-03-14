@@ -41,4 +41,11 @@ public class Author {
         this.registrationInstant = LocalDateTime.now(clock);
     }
 
+    public Author(String name, String email, String description) {
+        this.name = name;
+        this.email = email;
+        this.description = description;
+        this.registrationInstant = LocalDateTime.now();
+    }
+
 }
