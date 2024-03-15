@@ -87,7 +87,7 @@ public class NewPurchaseRequest {
             purchase.setState(state);
         }
 
-        if (StringUtils.hasText(coupon)) {
+        if (hasCoupon()) {
             Optional<Coupon> optionalCoupon = couponRepository.findByCode(coupon);
             Assert.state(optionalCoupon.isPresent(), "Should not be possible to convert purchaseRequest to domain with inexistent coupon code");
             purchase.applyCoupon(optionalCoupon.get());
@@ -97,6 +97,6 @@ public class NewPurchaseRequest {
     }
 
     public boolean hasCoupon() {
-        return coupon != null && !coupon.isBlank();
+        return StringUtils.hasText(coupon);
     }
 }

@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
+
 @Entity
 public class State {
 
@@ -42,7 +44,7 @@ public class State {
     }
 
     public boolean belongTo(Country country) {
-        Assert.state(this.country != null, "Cannot verify if state belong to country when country field is null");
+        Assert.state(Objects.nonNull(this.country), "Cannot verify if state belong to country when country field is null");
         return this.country.equals(country);
     }
 }

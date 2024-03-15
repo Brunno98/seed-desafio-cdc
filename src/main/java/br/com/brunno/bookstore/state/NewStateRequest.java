@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
+
 @Getter
 public class NewStateRequest {
 
@@ -25,7 +27,7 @@ public class NewStateRequest {
     public State toDomain(EntityManager entityManager) {
         Country country = entityManager.find(Country.class, countryId);
 
-        Assert.state(country != null, "CountryId Should exists when create state");
+        Assert.state(Objects.nonNull(country), "CountryId Should exists when create state");
 
         return new State(name, country);
     }

@@ -5,6 +5,8 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 public class IdExistsValidator implements ConstraintValidator<IdExists, Object> {
 
@@ -20,8 +22,10 @@ public class IdExistsValidator implements ConstraintValidator<IdExists, Object> 
 
     @Override
     public boolean isValid(Object target, ConstraintValidatorContext context) {
-        if (target == null) return true;
+        if (Objects.isNull(target)) return true;
+
         Object result = entityManager.find(domainClass, target);
-        return result != null;
+
+        return Objects.nonNull(result);
     }
 }
