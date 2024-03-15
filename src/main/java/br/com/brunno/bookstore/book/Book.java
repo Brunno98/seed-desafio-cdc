@@ -2,6 +2,7 @@ package br.com.brunno.bookstore.book;
 
 import br.com.brunno.bookstore.author.Author;
 import br.com.brunno.bookstore.category.Category;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +24,10 @@ public class Book {
 
     private String title;
 
+    @Column(length = 500)
     private String digest;
 
+    @Column(length = 1024)
     private String summary;
 
     private BigDecimal price;

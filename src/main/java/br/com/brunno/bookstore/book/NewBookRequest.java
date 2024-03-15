@@ -5,6 +5,7 @@ import br.com.brunno.bookstore.category.Category;
 import br.com.brunno.bookstore.shared.validator.IdExists;
 import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.persistence.EntityManager;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -29,6 +30,7 @@ public class NewBookRequest {
     private String summary;
 
     @Min(20)
+    @Digits(integer = 10, fraction = 2)
     private double price;
 
     @Min(100)
