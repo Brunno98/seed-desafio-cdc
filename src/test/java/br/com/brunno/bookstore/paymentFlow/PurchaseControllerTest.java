@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class PurchaseControllerTest {
     CustomMockMvc mockMvc;
 
     @Property(tries = 50)
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void test(
             @ForAll @StringLength(max = 50) @AlphaChars @NumericChars @NotBlank String email,
             @ForAll @StringLength(max = 255) @AlphaChars @NotBlank String name,

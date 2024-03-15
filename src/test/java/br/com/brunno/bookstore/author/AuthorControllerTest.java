@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -56,6 +57,7 @@ public class AuthorControllerTest {
 
     @Property(tries = 80)
     @Label("Quando criar um author deve-se retornar 200 e o author criado")
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
     void test1(@ForAll @StringLength(min = 10, max = 255) @AlphaChars String name,
                @ForAll @StringLength(value = 50) @AlphaChars String email,
                @ForAll @StringLength(min = 10, max = 400) @AlphaChars String description) throws Exception {

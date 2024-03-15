@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -46,6 +47,7 @@ public class CreateBookControllerTest {
     @Transactional
     @Property(tries = 50)
     @Label("Quando criar um livro deve-se retornar 200 e o livro no body")
+    @DirtiesContext(classMode =  DirtiesContext.ClassMode.BEFORE_CLASS)
     void createBook(
             @ForAll @AlphaChars @NotBlank String title,
             @ForAll @StringLength(max = 500) @AlphaChars @NotBlank String digest,
