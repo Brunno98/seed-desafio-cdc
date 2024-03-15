@@ -40,6 +40,6 @@ public class Coupon {
     public boolean isExpired() {
         LocalDate now = LocalDate.now();
 
-        return now.isAfter(expirationDate) || now.isEqual(expirationDate);
+        return now.isAfter(expirationDate);
     }
 }
