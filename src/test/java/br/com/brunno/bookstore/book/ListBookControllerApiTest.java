@@ -1,19 +1,18 @@
 package br.com.brunno.bookstore.book;
 
 import br.com.brunno.bookstore.helpers.CustomMockMvc;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Import(CustomMockMvc.class)
@@ -26,6 +25,7 @@ public class ListBookControllerApiTest {
 
     @Test
     @DisplayName("Deve retornar os detalhes do livro criado")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void test() throws Exception {
         // create author
         String authorName = "some name";
@@ -61,31 +61,24 @@ public class ListBookControllerApiTest {
                         "authorId", 1
                 ));
 
-        String expectedResponse = new ObjectMapper().writeValueAsString(Map.of(
-                "id", 1,
-                "title", title,
-                "digest", digest,
-                "summary", summary,
-                "price", price,
-                "numberOfPages", numberOfPages,
-                "isbn", isbn,
-                "publishDate", publishDate,
-                "category", Map.of(
-                        "id", 1,
-                        "name", categoryName
-                ),
-                "author", Map.of(
-                        "id", 1,
-                        "name", authorName,
-                        "email", authorEmail,
-                        "description", authorDescription,
-                        "registrationInstant", LocalDateTime.now().toString()
-                )
-        ));
-
-        mockMvc.get("/book/1").andExpectAll(
+        mockMvc.get("/book/1")
+            .andExpectAll(
                             status().isOk(),
-                            content().json(expectedResponse)
-                        );
+                            jsonPath("id").value(1),
+                            jsonPath("title").value(title),
+                            jsonPath("digest").value(digest),
+                            jsonPath("summary").value(summary),
+                            jsonPath("price").value(price),
+                            jsonPath("numberOfPages").value(numberOfPages),
+                            jsonPath("isbn").value(isbn),
+                            jsonPath("publishDate").value(publishDate),
+                            jsonPath("category.id").value(1),
+                            jsonPath("category.name").value(categoryName),
+                            jsonPath("author.id").value(1),
+                            jsonPath("author.name").value(authorName),
+                            jsonPath("author.email").value(authorEmail),
+                            jsonPath("author.description").value(authorDescription),
+                            jsonPath("author.registrationInstant").exists()
+                    );
     }
 }
