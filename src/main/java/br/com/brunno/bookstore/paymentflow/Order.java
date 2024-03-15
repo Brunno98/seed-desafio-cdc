@@ -25,6 +25,14 @@ public class Order {
     @Valid
     private List<OrderItem> items;
 
+    /*
+    Dada um list de orderItem, calcula o total desse itens
+
+    lista com 1 item com 1 unidade
+    lista com 1 item com 2 unidades
+    lista com 2 itens com 2 unidades
+     */
+
     public BigDecimal calculateTotalFromItems(EntityManager entityManager) {
         return items.stream()
                 .map(item -> {
