@@ -34,15 +34,7 @@ public class TotalMatchCartItemsValidator implements Validator {
 
         Order order = request.getOrder();
 
-        List<BigDecimal> collect = order.getItems().stream().map(item -> {
-            Book book = entityManager.find(Book.class, item.getBookId());
-            BigDecimal price = book.getPrice();
-            return price.multiply(BigDecimal.valueOf(item.getQuantity()));
-        }).collect(Collectors.toList());
-
-        BigDecimal reduced = collect.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (!reduced.equals(order.getTotal())) {
+        if (!order.calculateTotalFromItems(entityManager).equals(order.getTotal())) {
             errors.rejectValue("order.total", null, "'total' field doesn't match the total value in 'items'");
         }
 
