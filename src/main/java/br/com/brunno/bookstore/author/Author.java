@@ -34,13 +34,6 @@ public class Author {
     @Column(nullable = false)
     private LocalDateTime registrationInstant;
 
-    public Author(String name, String email, String description, Clock clock) {
-        this.name = name;
-        this.email = email;
-        this.description = description;
-        this.registrationInstant = LocalDateTime.now(clock);
-    }
-
     public Author(String name, String email, String description) {
         this.name = name;
         this.email = email;

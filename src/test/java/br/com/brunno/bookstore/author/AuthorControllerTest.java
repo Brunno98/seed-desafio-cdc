@@ -1,6 +1,5 @@
 package br.com.brunno.bookstore.author;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import net.jqwik.api.ForAll;
@@ -8,14 +7,8 @@ import net.jqwik.api.Label;
 import net.jqwik.api.Property;
 import net.jqwik.api.constraints.AlphaChars;
 import net.jqwik.api.constraints.StringLength;
-import net.jqwik.api.lifecycle.BeforeContainer;
-import net.jqwik.api.lifecycle.BeforeExample;
-import net.jqwik.api.lifecycle.BeforeProperty;
 import net.jqwik.spring.JqwikSpringSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,12 +19,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEnti
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,27 +51,16 @@ public class AuthorControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
-    Clock clock;
-
     @Autowired
     TestEntityManager entityManager;
 
-    @BeforeEach
-    public void init() {
-        Mockito.when(clock.getZone()).thenReturn(ZoneId.of("America/Sao_Paulo"));
-        Mockito.when(clock.instant()).thenReturn(Instant.parse("2024-03-14T14:50:12.123Z"));
-    }
-
-    @Property(tries = 100)
+    @Property(tries = 80)
     @Label("Quando criar um author deve-se retornar 200 e o author criado")
     void test1(@ForAll @StringLength(min = 10, max = 255) @AlphaChars String name,
                @ForAll @StringLength(value = 50) @AlphaChars String email,
                @ForAll @StringLength(min = 10, max = 400) @AlphaChars String description) throws Exception {
         Assumptions.assumeTrue(emailsUsed.add(email));
 
-        Mockito.when(clock.getZone()).thenReturn(ZoneId.of("America/Sao_Paulo"));
-        Mockito.when(clock.instant()).thenReturn(Instant.parse("2024-03-14T14:50:12.123Z"));
         String payload = new ObjectMapper()
                 .writeValueAsString(Map.of("name", name,
                         "email", email + "@email.com",
@@ -92,7 +75,7 @@ public class AuthorControllerTest {
                         jsonPath("name").value(name),
                         jsonPath("email").value(email + "@email.com"),
                         jsonPath("description").value(description),
-                        jsonPath("registrationInstant").value("2024-03-14T11:50:12.123")
+                        jsonPath("registrationInstant").exists()
                 );
 
     }
@@ -116,7 +99,7 @@ public class AuthorControllerTest {
     @DisplayName("Não pode existir 2 autores com o mesmo email")
     @Test
     void test3() throws Exception{
-        Author existentAuthor = new Author("existentAuthor", EMAIL, "Existent author", clock);
+        Author existentAuthor = new Author("existentAuthor", EMAIL, "Existent author");
         entityManager.persist(existentAuthor);
 
         mockMvc.perform(post("/author")

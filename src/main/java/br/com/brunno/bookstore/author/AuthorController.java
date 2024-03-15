@@ -20,18 +20,16 @@ import java.time.Clock;
 public class AuthorController {
 
     private final EntityManager entityManager;
-    private final Clock clock;
 
     @Autowired
-    public AuthorController(EntityManager entityManager, Clock clock) {
+    public AuthorController(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.clock = clock;
     }
 
     @Transactional
     @PostMapping
     public ResponseEntity<CreateAuthorResponse> createAuthor(@RequestBody @Valid CreateAuthorRequest createRequest) {
-        Author author = createRequest.toDomain(clock);
+        Author author = createRequest.toDomain();
 
         entityManager.persist(author);
 

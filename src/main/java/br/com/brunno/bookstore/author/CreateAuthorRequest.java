@@ -25,7 +25,7 @@ public class CreateAuthorRequest {
     @Length(max = 400)
     private final String description;
 
-    public Author toDomain(Clock clock) {
-        return new Author(name, email, description, clock);
+    public Author toDomain() {
+        return new Author(name, email, description);
     }
 }
