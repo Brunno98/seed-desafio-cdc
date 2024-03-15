@@ -65,8 +65,10 @@ public class NewPurchaseRequest {
 
     private String coupon;
 
+
     public Purchase toDomain(EntityManager entityManager, CouponRepository couponRepository) {
         Country country = entityManager.find(Country.class, countryId);
+        Assert.notNull(country, "NewPurchaseRequest should not exists with an countryId inexistent!");
         Purchase purchase = new Purchase(
                 email,
                 name,
