@@ -39,7 +39,7 @@ public class PurchaseDetailsResponse {
         this.countryName = purchase.getCountryName();
         this.stateName = purchase.getStateName();
         this.order = purchase.getOrder();
-        this.originalValue = purchase.getOrinalValue();
+        this.originalValue = purchase.getOriginalValue();
 
         this.appliedCupon = purchase.hasAppliedCoupon();
         if (this.appliedCupon){

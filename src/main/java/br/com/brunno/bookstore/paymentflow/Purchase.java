@@ -149,18 +149,20 @@ public class Purchase {
         return appliedCoupon != null;
     }
 
-    public BigDecimal getOrinalValue() {
+    public BigDecimal getOriginalValue() {
         Assert.notNull(order, "Purchase doesn't have order to get value from");
+        Assert.notNull(order.getTotal(), "Purcharse order should have a total value");
         return order.getTotal();
     }
 
     public BigDecimal getFinalValue() {
-        BigDecimal orinalValue = getOrinalValue();
-        if (!hasAppliedCoupon()) return orinalValue;
+        BigDecimal originalValue = getOriginalValue();
 
-        BigDecimal discount = orinalValue.multiply(BigDecimal.valueOf(getDiscount()));
+        if (!hasAppliedCoupon()) return originalValue;
 
-        return orinalValue.subtract(discount);
+        BigDecimal discount = originalValue.multiply(BigDecimal.valueOf(getDiscount()));
+
+        return originalValue.subtract(discount);
     }
 
     private double getDiscount() {
