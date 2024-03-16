@@ -1,5 +1,6 @@
 package br.com.brunno.bookstore.paymentflow;
 
+import br.com.brunno.bookstore.coupon.Coupon;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
@@ -40,12 +41,11 @@ public class PurchaseDetailsResponse {
         this.stateName = purchase.getStateName();
         this.order = purchase.getOrder();
         this.originalValue = purchase.getOriginalValue();
-
         this.appliedCupon = purchase.hasAppliedCoupon();
-        if (this.appliedCupon){
-            Assert.notNull(purchase.getAppliedCoupon(), "getAppliedCoupon() should not be null because hasAppliedCoupon() was returned true.");
-            this.coupon = new AppliedCouponDetails(purchase.getAppliedCoupon());
-            this.finalValue = purchase.getFinalValue();
-        }
+    }
+
+    public void setAppliedCupon(AppliedCoupon coupon, BigDecimal finalValue) {
+        this.coupon = new AppliedCouponDetails(coupon);
+        this.finalValue = finalValue;
     }
 }

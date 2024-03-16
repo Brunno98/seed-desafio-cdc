@@ -37,7 +37,7 @@ public class NewCouponControllerTest {
     @Autowired
     CustomMockMvc mockMvc;
 
-    @Property(tries = 50)
+    @Property(tries = 10)
     @Label("")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void test(

@@ -15,6 +15,9 @@ import org.springframework.validation.Errors;
 
 import java.util.List;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+
 public class StateBelongToCountryValidatorTest {
 
     EntityManager entityManager = Mockito.mock(EntityManager.class);
@@ -41,6 +44,7 @@ public class StateBelongToCountryValidatorTest {
     void hasCountryAndStateValid() {
         Country brazil = new Country("Brazil");
         State rioDeJaneiro = new State("Rio de Janeiro", brazil);
+        ReflectionTestUtils.setField(brazil, "states", List.of(rioDeJaneiro));
         Mockito.doReturn(brazil).when(entityManager).find(Country.class, 1L);
         Mockito.doReturn(rioDeJaneiro).when(entityManager).find(State.class, 1L);
 
@@ -90,6 +94,18 @@ public class StateBelongToCountryValidatorTest {
         stateBelongToCountryValidator.validate(request, errors);
 
         Assertions.assertThat(errors.hasErrors()).isFalse();
+    }
+
+    @DisplayName("Se já existir erro, então não faz a validacao de estado pertence ao pais")
+    @Test
+    void hasErrors() {
+        NewPurchaseRequest request = new NewPurchaseRequest();
+        Errors errors = Mockito.mock(Errors.class);
+        doReturn(true).when(errors).hasErrors();
+
+        stateBelongToCountryValidator.validate(request, errors);
+
+        Mockito.verify(entityManager, never()).find(Mockito.eq(Country.class), Mockito.any());
     }
 
 }

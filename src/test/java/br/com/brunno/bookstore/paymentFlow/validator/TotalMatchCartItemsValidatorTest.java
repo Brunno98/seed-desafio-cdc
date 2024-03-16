@@ -3,6 +3,7 @@ package br.com.brunno.bookstore.paymentFlow.validator;
 import br.com.brunno.bookstore.author.Author;
 import br.com.brunno.bookstore.book.Book;
 import br.com.brunno.bookstore.category.Category;
+import br.com.brunno.bookstore.country.Country;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;
 import br.com.brunno.bookstore.paymentflow.Order;
 import br.com.brunno.bookstore.paymentflow.OrderItem;
@@ -10,6 +11,7 @@ import br.com.brunno.bookstore.paymentflow.validator.TotalMatchCartItemsValidato
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
@@ -21,6 +23,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 
 public class TotalMatchCartItemsValidatorTest {
 
@@ -51,6 +56,18 @@ public class TotalMatchCartItemsValidatorTest {
         Assertions.assertThat(errors.hasErrors()).isEqualTo(expected);
     }
 
+    @DisplayName("Se já existir erro, então não faz a validacao do preço total")
+    @Test
+    void hasErrors() {
+        NewPurchaseRequest request = new NewPurchaseRequest();
+        Errors errors = Mockito.mock(Errors.class);
+        doReturn(true).when(errors).hasErrors();
+
+        totalMatchCartItemsValidator.validate(request, errors);
+
+        Mockito.verify(entityManager, never()).find(Mockito.eq(Country.class), Mockito.any());
+    }
+
     private OrderItem createOrderItem(Integer bookId, Integer quantity) {
         OrderItem orderItem = new OrderItem();
         ReflectionTestUtils.setField(orderItem, "bookId", bookId);
@@ -64,4 +81,5 @@ public class TotalMatchCartItemsValidatorTest {
         ReflectionTestUtils.setField(newOrder, "items", Arrays.stream(orderItems).collect(Collectors.toList()));
         return newOrder;
     }
+
 }

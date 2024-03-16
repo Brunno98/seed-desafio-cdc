@@ -3,6 +3,7 @@ package br.com.brunno.bookstore.paymentflow;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,11 @@ public class PurchaseDetailsController {
 
         Optional.ofNullable(purchase).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        return new PurchaseDetailsResponse(purchase);
+        PurchaseDetailsResponse response = new PurchaseDetailsResponse(purchase);
+        if (response.isAppliedCupon()) {
+            response.setAppliedCupon(purchase.getAppliedCoupon(), purchase.getFinalValue());
+        }
+
+        return response;
     }
 }

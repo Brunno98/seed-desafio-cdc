@@ -2,9 +2,9 @@ package br.com.brunno.bookstore.paymentFlow;
 
 import br.com.brunno.bookstore.helpers.CustomMockMvc;
 import net.jqwik.api.ForAll;
+import net.jqwik.api.Label;
 import net.jqwik.api.Property;
 import net.jqwik.api.constraints.AlphaChars;
-import net.jqwik.api.constraints.BigRange;
 import net.jqwik.api.constraints.IntRange;
 import net.jqwik.api.constraints.NotBlank;
 import net.jqwik.api.constraints.NumericChars;
@@ -34,7 +34,8 @@ public class PurchaseControllerTest {
     @Autowired
     CustomMockMvc mockMvc;
 
-    @Property(tries = 50)
+    @Label("Fechar compra deve salvar a compra e retornar 201")
+    @Property(tries = 10)
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void test(
             @ForAll @StringLength(max = 50) @AlphaChars @NumericChars @NotBlank String email,

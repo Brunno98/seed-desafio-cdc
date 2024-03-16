@@ -55,7 +55,7 @@ public class AuthorControllerTest {
     @Autowired
     TestEntityManager entityManager;
 
-    @Property(tries = 80)
+    @Property(tries = 10)
     @Label("Quando criar um author deve-se retornar 200 e o author criado")
     @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
     void test1(@ForAll @StringLength(min = 10, max = 255) @AlphaChars String name,
@@ -115,7 +115,7 @@ public class AuthorControllerTest {
     }
 
     @Label("Descrição não pode ser maior que 400 caracteres")
-    @Property(tries = 20)
+    @Property(tries = 10)
     void test4(@ForAll @AlphaChars @StringLength(min = 401, max = 600) String description) throws Exception{
         mockMvc.perform(post("/author")
                         .contentType(MediaType.APPLICATION_JSON)

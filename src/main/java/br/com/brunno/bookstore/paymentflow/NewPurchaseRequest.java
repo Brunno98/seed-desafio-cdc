@@ -12,13 +12,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
-@ToString
 @Getter
 public class NewPurchaseRequest {
 

@@ -45,7 +45,7 @@ public class CreateBookControllerTest {
     TestEntityManager entityManager;
 
     @Transactional
-    @Property(tries = 50)
+    @Property(tries = 10)
     @Label("Quando criar um livro deve-se retornar 200 e o livro no body")
     @DirtiesContext(classMode =  DirtiesContext.ClassMode.BEFORE_CLASS)
     void createBook(

@@ -7,31 +7,33 @@ import br.com.brunno.bookstore.paymentflow.validator.CouponValidator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CouponValidatorTest {
 
-    private static final Coupon coupon = new Coupon("some code", .10, LocalDate.now().minusDays(1));
-
     CouponRepository couponRepository = mock(CouponRepository.class);
     CouponValidator couponValidator = new CouponValidator(couponRepository);
-
 
     @DisplayName("Rejeita quando o cupon estiver expirado")
     @Test
     void expiredCoupon() {
-        when(couponRepository.findByCode("some code")).thenReturn(Optional.of(coupon));
+        Coupon expiredCoupon = new Coupon("some code", .10, LocalDate.now().minusDays(1));
+        when(couponRepository.findByCode("some code")).thenReturn(Optional.of(expiredCoupon));
         NewPurchaseRequest request = new NewPurchaseRequest();
         ReflectionTestUtils.setField(request, "coupon", "some code");
         Errors errors = mock(Errors.class);
@@ -68,6 +70,7 @@ public class CouponValidatorTest {
     @DisplayName("Cupom valido quando existir e não estiver expirado")
     @Test
     void validCoupon() {
+        Coupon coupon = new Coupon("some code", .10, LocalDate.now().plusDays(1));
         when(couponRepository.findByCode("some code")).thenReturn(Optional.of(coupon));
         NewPurchaseRequest request = new NewPurchaseRequest();
         ReflectionTestUtils.setField(request, "coupon", "some code");
@@ -76,5 +79,17 @@ public class CouponValidatorTest {
         couponValidator.validate(request, errors);
 
         Assertions.assertThat(errors.hasErrors()).isFalse();
+    }
+
+    @DisplayName("Se já existir erro, então não faz a validacao de cupom")
+    @Test
+    void hasErrors() {
+        NewPurchaseRequest request = new NewPurchaseRequest();
+        Errors errors = Mockito.mock(Errors.class);
+        doReturn(true).when(errors).hasErrors();
+
+        couponValidator.validate(request, errors);
+
+        Mockito.verify(couponRepository, never()).findByCode(Mockito.any());
     }
 }
