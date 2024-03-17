@@ -15,6 +15,8 @@ import org.springframework.validation.Errors;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
@@ -28,6 +30,42 @@ public class CouponValidatorTest {
 
     CouponRepository couponRepository = mock(CouponRepository.class);
     CouponValidator couponValidator = new CouponValidator(couponRepository);
+
+    /*
+    a - has errors
+    b - has coupon
+    c - find coupon
+    d - coupon expired
+
+    R - invalid coupon
+
+    (and)
+    a b c d = R
+1   v v v v   f
+2   v v v f   f
+3   v v f v   f
+4   v v f f   f
+5   v f v v   f
+6   v f v f   f
+7   v f f v   f
+8   v f f f   f
+9   f v v v   f
+10  f v v f   v
+11  f v f v   f
+12  f v f f   f
+13  f f v v   f
+14  f f v f   f
+15  f f f v   f
+16  f f f f   f
+
+    a -> (2,10)
+    b -> (10,14)
+    c -> (10,12)
+    d -> (10,9)
+
+    (2, 9, 10, 12, 14)
+
+     */
 
     @DisplayName("Rejeita quando o cupon estiver expirado")
     @Test
@@ -51,7 +89,7 @@ public class CouponValidatorTest {
 
         couponValidator.validate(request, errors);
 
-        Assertions.assertThat(errors.hasErrors()).isFalse();
+        verify(couponRepository, never()).findByCode(any());
     }
 
     @DisplayName("Rejeita quando o copom passado na request não existir")
@@ -78,7 +116,7 @@ public class CouponValidatorTest {
 
         couponValidator.validate(request, errors);
 
-        Assertions.assertThat(errors.hasErrors()).isFalse();
+        verify(errors, never()).rejectValue(eq("coupon"), any(), any());
     }
 
     @DisplayName("Se já existir erro, então não faz a validacao de cupom")
@@ -90,6 +128,7 @@ public class CouponValidatorTest {
 
         couponValidator.validate(request, errors);
 
-        Mockito.verify(couponRepository, never()).findByCode(Mockito.any());
+        verify(couponRepository, never()).findByCode(any());
+        verify(errors, never()).rejectValue(eq("coupon"), any(), any());
     }
 }
