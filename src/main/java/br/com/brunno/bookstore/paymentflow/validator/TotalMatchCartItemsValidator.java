@@ -1,21 +1,14 @@
 package br.com.brunno.bookstore.paymentflow.validator;
 
-import br.com.brunno.bookstore.book.Book;
-import br.com.brunno.bookstore.paymentflow.Order;
-import br.com.brunno.bookstore.paymentflow.OrderItem;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;
+import br.com.brunno.bookstore.paymentflow.Order;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RequiredArgsConstructor
-//TODO: Total must be the value and not the quantity!!
 @Component
 public class TotalMatchCartItemsValidator implements Validator {
 
