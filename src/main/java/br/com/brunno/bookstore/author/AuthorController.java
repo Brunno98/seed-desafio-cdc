@@ -13,19 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/author")
 public class AuthorController {
 
-    private final AuthorRepository authorRepository;
+    private final CreateNewAuthor createNewAuthor;
 
     @Autowired
-    public AuthorController(AuthorRepository authorRepository) {
-        this.authorRepository = authorRepository;
+    public AuthorController(CreateNewAuthor createNewAuthor) {
+        this.createNewAuthor = createNewAuthor;
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<CreateAuthorResponse> createAuthor(@RequestBody @Valid CreateAuthorRequest createRequest) {
-        Author author = createRequest.toDomain();
-
-        authorRepository.save(author);
+        Author author = createNewAuthor.create(createRequest);
 
         CreateAuthorResponse response = CreateAuthorResponse.from(author) ;
 
