@@ -1,10 +1,11 @@
 package br.com.brunno.bookstore.book;
 
 import br.com.brunno.bookstore.author.Author;
+import br.com.brunno.bookstore.author.AuthorRepository;
 import br.com.brunno.bookstore.category.Category;
+import br.com.brunno.bookstore.category.CategoryRepository;
 import br.com.brunno.bookstore.shared.validator.IdExists;
 import br.com.brunno.bookstore.shared.validator.UniqueValue;
-import jakarta.persistence.EntityManager;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
@@ -12,12 +13,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Getter
-public class NewBookRequest {
+public class NewBookRequest implements NewBookDto {
 
     @NotBlank
     @UniqueValue(domainClass = Book.class, fieldName = "title")
@@ -51,9 +55,12 @@ public class NewBookRequest {
     @IdExists(domain = Author.class)
     private Long authorId;
 
-    public Book toDomain(EntityManager entityManager) {
-        Author author = (Author) entityManager.createQuery("FROM Author a where a.id = :id").setParameter("id", authorId).getSingleResult();
-        Category category = (Category) entityManager.createQuery("FROM Category c where c.id = :id").setParameter("id", categoryId).getSingleResult();
+    @Override
+    public Book toBook(AuthorRepository authorRepository, CategoryRepository categoryRepository) {
+        Optional<Author> optionalAuthor = authorRepository.findById(authorId);
+        Assert.isTrue(optionalAuthor.isPresent(), "Should exists author with id "+authorId+" when convert request to book");
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+        Assert.isTrue(optionalCategory.isPresent(), "Should exists category with id "+categoryId+" when convert request to book");
         return new Book(
                 title,
                 digest,
@@ -62,8 +69,9 @@ public class NewBookRequest {
                 numberOfPages,
                 isbn,
                 publishDate,
-                category,
-                author
+                optionalCategory.get(),
+                optionalAuthor.get()
         );
     }
+
 }

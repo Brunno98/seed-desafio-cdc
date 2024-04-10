@@ -1,8 +1,5 @@
 package br.com.brunno.bookstore.book;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,15 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/book")
 public class CreateBookController {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
+    private final CreateNewBook createNewBook;
 
-    @Transactional
     @PostMapping
     public NewBookResponse createBook(@RequestBody @Valid NewBookRequest newBookRequest) {
-        Book book = newBookRequest.toDomain(entityManager);
-
-        entityManager.persist(book);
+        Book book = createNewBook.create(newBookRequest);
 
         return NewBookResponse.from(book);
     }
