@@ -1,6 +1,7 @@
 package br.com.brunno.bookstore.state;
 
 import br.com.brunno.bookstore.country.Country;
+import br.com.brunno.bookstore.country.CountryRepository;
 import br.com.brunno.bookstore.shared.validator.IdExists;
 import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.persistence.EntityManager;
@@ -11,9 +12,10 @@ import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Getter
-public class NewStateRequest {
+public class NewStateRequest implements CreateStateDto {
 
     @NotBlank
     @UniqueValue(domainClass = State.class, fieldName = "name")
@@ -24,11 +26,10 @@ public class NewStateRequest {
     @IdExists(domain = Country.class)
     private Long countryId;
 
-    public State toDomain(EntityManager entityManager) {
-        Country country = entityManager.find(Country.class, countryId);
-
-        Assert.state(Objects.nonNull(country), "CountryId Should exists when create state");
-
-        return new State(name, country);
+    @Override
+    public State toState(CountryRepository countryRepository) {
+        Optional<Country> optionalCountry = countryRepository.findById(countryId);
+        Assert.state(optionalCountry.isPresent(), "CountryId "+countryId+" Should exists when create state");
+        return new State(name, optionalCountry.get());
     }
 }

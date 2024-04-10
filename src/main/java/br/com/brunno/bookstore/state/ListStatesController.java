@@ -12,11 +12,10 @@ import java.util.List;
 @RestController
 public class ListStatesController {
 
-    private final EntityManager entityManager;
+    private final ListStates listStates;
 
     @GetMapping("/states")
     public List<State> listStates() {
-        List resultList = entityManager.createQuery("FROM State").getResultList();
-        return resultList;
+        return listStates.all();
     }
 }

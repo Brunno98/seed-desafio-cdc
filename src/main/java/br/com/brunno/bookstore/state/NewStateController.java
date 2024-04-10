@@ -1,7 +1,5 @@
 package br.com.brunno.bookstore.state;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NewStateController {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
+    private final CreateNewState createNewState;
 
     @Transactional
     @PostMapping("/state")
     public NewStateResponse createState(@RequestBody @Valid NewStateRequest newStateRequest) {
-        State state = newStateRequest.toDomain(entityManager);
-
-        entityManager.persist(state);
+        State state = createNewState.create(newStateRequest);
 
         return new NewStateResponse(state);
     }
