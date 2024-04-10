@@ -4,12 +4,13 @@ import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import lombok.Getter;
 
 @Getter
-public class NewCountryRequest {
+public class NewCountryRequest implements NewCountryDto {
 
     @UniqueValue(domainClass = Country.class, fieldName = "name")
     private String name;
 
-    public Country toDomain() {
+    @Override
+    public Country toCountry() {
         return new Country(name);
     }
 }

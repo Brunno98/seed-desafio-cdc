@@ -1,7 +1,5 @@
 package br.com.brunno.bookstore.country;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NewCountryController {
 
-    @PersistenceContext
-    private final EntityManager entityManager;
+    private final CreateNewCountry createNewCountry;
 
     @Transactional
     @PostMapping("/country")
     public NewCountryResponse createCountry(@RequestBody @Valid NewCountryRequest newCountryRequest) {
-        Country country = newCountryRequest.toDomain();
-
-        entityManager.persist(country);
+        Country country = createNewCountry.create(newCountryRequest);
 
         return new NewCountryResponse(country);
     }
