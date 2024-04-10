@@ -4,14 +4,14 @@ import br.com.brunno.bookstore.shared.validator.UniqueValue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
-@Getter
-public class CreateCategoryRequest {
+public class CreateCategoryRequest implements NewCategoryDto {
 
     @NotBlank
     @UniqueValue(fieldName = "name", domainClass = Category.class)
     private String name;
 
-    public Category toModel() {
-        return new Category(name);
+    @Override
+    public String getName() {
+        return name;
     }
 }
