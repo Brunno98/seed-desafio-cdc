@@ -16,8 +16,8 @@ import java.util.Optional;
 public class ListBookControllerTest {
 
     BookRepository bookRepository = Mockito.mock(BookRepository.class);
-
-    ListBooksController listBooksController = new ListBooksController(bookRepository);
+    BookFinder bookFinder = new BookFinder(bookRepository);
+    ListBooksController listBooksController = new ListBooksController(bookFinder);
 
     @Test
     @DisplayName("when get book details not found a book then should return bad request")

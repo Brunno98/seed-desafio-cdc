@@ -15,18 +15,18 @@ import java.util.Optional;
 @RequestMapping("/book")
 public class ListBooksController {
 
-    private final BookRepository bookRepository;
+    private final BookFinder bookFinder;
 
     @GetMapping
     public List<BookListItem> listBook() {
-        List<Book> bookList = bookRepository.findAll();
+        List<Book> bookList = bookFinder.findAll();
 
         return BookListItem.listFrom(bookList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDetails> getBookDetails(@PathVariable Long id) {
-        Optional<Book> optionalBook = bookRepository.findById(id);
+        Optional<Book> optionalBook = bookFinder.findById(id);
         if (optionalBook.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
