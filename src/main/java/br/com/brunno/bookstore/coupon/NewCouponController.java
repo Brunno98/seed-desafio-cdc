@@ -1,7 +1,5 @@
 package br.com.brunno.bookstore.coupon;
 
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NewCouponController {
 
-    private final EntityManager entityManager;
+    private final CreateNewCoupon createNewCoupon;
 
-    @Transactional
     @PostMapping("/coupon")
     public NewCouponResponse createCoupon(@RequestBody @Valid NewCouponRequest newCouponRequest) {
-        Coupon coupon = newCouponRequest.toDomain();
-
-        entityManager.persist(coupon);
+        Coupon coupon = createNewCoupon.execute(newCouponRequest);
 
         return new NewCouponResponse(coupon);
     }

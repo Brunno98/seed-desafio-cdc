@@ -8,4 +8,6 @@ public interface CouponRepository extends Repository<Coupon, Long> {
 
     Optional<Coupon> findByCode(String code);
 
+    void save(Coupon coupon);
+
 }

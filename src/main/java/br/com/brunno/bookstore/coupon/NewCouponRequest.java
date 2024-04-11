@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Range;
 import java.time.LocalDate;
 
 @Getter
-public class NewCouponRequest {
+public class NewCouponRequest implements NewCouponDto {
 
     @NotBlank
     @UniqueValue(domainClass = Coupon.class, fieldName = "code")
@@ -25,7 +25,8 @@ public class NewCouponRequest {
     @Future
     private LocalDate expirationDate;
 
-    public Coupon toDomain() {
+    @Override
+    public Coupon toCoupon() {
         return new Coupon(code, discount, expirationDate);
     }
 }
