@@ -1,5 +1,6 @@
-package br.com.brunno.bookstore.paymentflow.validator;
+package br.com.brunno.bookstore.paymentflow.webvalidator;
 
+import br.com.brunno.bookstore.book.BookRepository;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;
 import br.com.brunno.bookstore.paymentflow.Order;
 import jakarta.persistence.EntityManager;
@@ -12,7 +13,7 @@ import org.springframework.validation.Validator;
 @Component
 public class TotalMatchCartItemsValidator implements Validator {
 
-    private final EntityManager entityManager;
+    private final BookRepository bookRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -27,7 +28,7 @@ public class TotalMatchCartItemsValidator implements Validator {
 
         Order order = request.getOrder();
 
-        if (!order.calculateTotalFromItems(entityManager).equals(order.getTotal())) {
+        if (!order.calculateTotalFromItems(bookRepository).equals(order.getTotal())) {
             errors.rejectValue("order.total", null, "'total' field doesn't match the total value in 'items'");
         }
 

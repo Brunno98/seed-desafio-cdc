@@ -1,11 +1,13 @@
 package br.com.brunno.bookstore.paymentflow;
 
 import br.com.brunno.bookstore.country.Country;
+import br.com.brunno.bookstore.country.CountryRepository;
 import br.com.brunno.bookstore.coupon.Coupon;
 import br.com.brunno.bookstore.coupon.CouponRepository;
 import br.com.brunno.bookstore.shared.validator.Document;
 import br.com.brunno.bookstore.shared.validator.IdExists;
 import br.com.brunno.bookstore.state.State;
+import br.com.brunno.bookstore.state.StateRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -18,7 +20,7 @@ import org.springframework.util.StringUtils;
 import java.util.Optional;
 
 @Getter
-public class NewPurchaseRequest {
+public class NewPurchaseRequest implements PurchaseRequestData {
 
     @NotBlank
     @Email
@@ -60,13 +62,18 @@ public class NewPurchaseRequest {
     @Valid
     private Order order;
 
-
     private String coupon;
 
 
-    public Purchase toDomain(EntityManager entityManager, CouponRepository couponRepository) {
-        Country country = entityManager.find(Country.class, countryId);
-        Assert.notNull(country, "NewPurchaseRequest should not exists with an countryId inexistent!");
+    public boolean hasCoupon() {
+        return StringUtils.hasText(coupon);
+    }
+
+    @Override
+    public Purchase toPurchase(CountryRepository countryRepository, CouponRepository couponRepository, StateRepository stateRepository) {
+        Optional<Country> optionalCountry = countryRepository.findById(countryId);
+        Assert.isTrue(optionalCountry.isPresent(), "NewPurchaseRequest should not exists with an countryId inexistent!");
+        Country country = optionalCountry.get();
         Purchase purchase = new Purchase(
                 email,
                 name,
@@ -81,8 +88,9 @@ public class NewPurchaseRequest {
                 order
         );
         if (country.hasState()) {
-            State state = entityManager.find(State.class, stateId);
-            purchase.setState(state);
+            Optional<State> optionalState = stateRepository.findById(stateId);
+            Assert.isTrue(optionalState.isPresent(), "State with "+stateId+" should exists");
+            purchase.setState(optionalState.get());
         }
 
         if (hasCoupon()) {
@@ -94,7 +102,8 @@ public class NewPurchaseRequest {
         return purchase;
     }
 
-    public boolean hasCoupon() {
-        return StringUtils.hasText(coupon);
+    @Override
+    public Optional<String> getCouponCode() {
+        return Optional.ofNullable(coupon);
     }
 }

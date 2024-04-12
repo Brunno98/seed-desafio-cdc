@@ -1,4 +1,4 @@
-package br.com.brunno.bookstore.paymentflow.validator;
+package br.com.brunno.bookstore.paymentflow.webvalidator;
 
 import br.com.brunno.bookstore.coupon.Coupon;
 import br.com.brunno.bookstore.coupon.CouponRepository;

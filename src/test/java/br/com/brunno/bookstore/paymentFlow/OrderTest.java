@@ -2,6 +2,7 @@ package br.com.brunno.bookstore.paymentFlow;
 
 import br.com.brunno.bookstore.author.Author;
 import br.com.brunno.bookstore.book.Book;
+import br.com.brunno.bookstore.book.BookRepository;
 import br.com.brunno.bookstore.category.Category;
 import br.com.brunno.bookstore.paymentflow.Order;
 import br.com.brunno.bookstore.paymentflow.OrderItem;
@@ -17,12 +18,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class OrderTest {
 
     EntityManager entityManager = Mockito.mock(EntityManager.class);
+    BookRepository bookRepository = mock(BookRepository.class);
 
     Author author = new Author("some name", "some.email@email.com", "some descriptin");
     Category category = new Category("some category");
@@ -40,9 +44,9 @@ public class OrderTest {
         ReflectionTestUtils.setField(orderItem, "quantity", quantity);
         ReflectionTestUtils.setField(order, "items", List.of(orderItem));
         ReflectionTestUtils.setField(order, "total", total);
-        doReturn(book).when(entityManager).find(Book.class, 1);
+        doReturn(Optional.of(book)).when(bookRepository).findById(1L);
 
-        BigDecimal totalFromItems = order.calculateTotalFromItems(entityManager);
+        BigDecimal totalFromItems = order.calculateTotalFromItems(bookRepository);
 
         Assertions.assertThat(totalFromItems).isEqualTo(order.getTotal());
     }
@@ -56,11 +60,27 @@ public class OrderTest {
         ReflectionTestUtils.setField(otherOrderItem, "quantity", 2);
         ReflectionTestUtils.setField(order, "items", List.of(orderItem, otherOrderItem));
         ReflectionTestUtils.setField(order, "total", BigDecimal.valueOf(500));
-        doReturn(book).when(entityManager).find(Book.class, 1);
-        doReturn(otherBook).when(entityManager).find(Book.class, 2);
+        doReturn(Optional.of(book)).when(bookRepository).findById(1L);
+        doReturn(Optional.of(otherBook)).when(bookRepository).findById(2L);
 
-        BigDecimal totalFromItems = order.calculateTotalFromItems(entityManager);
+        BigDecimal totalFromItems = order.calculateTotalFromItems(bookRepository);
 
         Assertions.assertThat(totalFromItems).isEqualTo(order.getTotal());
+    }
+
+    @Test
+    @DisplayName("Caso algum dos ids passados não existir, então lanca exceção")
+    void bookNotFound() {
+        ReflectionTestUtils.setField(orderItem, "bookId", 1);
+        ReflectionTestUtils.setField(orderItem, "quantity", 2);
+        ReflectionTestUtils.setField(otherOrderItem, "bookId", 2);
+        ReflectionTestUtils.setField(otherOrderItem, "quantity", 2);
+        ReflectionTestUtils.setField(order, "items", List.of(orderItem, otherOrderItem));
+        ReflectionTestUtils.setField(order, "total", BigDecimal.valueOf(500));
+        doReturn(Optional.of(book)).when(bookRepository).findById(1L);
+        doReturn(Optional.empty()).when(bookRepository).findById(2L);
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(() -> order.calculateTotalFromItems(bookRepository));
     }
 }

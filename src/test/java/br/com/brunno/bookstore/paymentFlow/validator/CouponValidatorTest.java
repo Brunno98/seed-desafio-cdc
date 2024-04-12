@@ -3,13 +3,11 @@ package br.com.brunno.bookstore.paymentFlow.validator;
 import br.com.brunno.bookstore.coupon.Coupon;
 import br.com.brunno.bookstore.coupon.CouponRepository;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;
-import br.com.brunno.bookstore.paymentflow.validator.CouponValidator;
-import org.assertj.core.api.Assertions;
+import br.com.brunno.bookstore.paymentflow.webvalidator.CouponValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
 import java.time.LocalDate;

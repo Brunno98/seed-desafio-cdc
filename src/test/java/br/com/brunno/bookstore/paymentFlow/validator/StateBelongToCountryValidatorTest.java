@@ -2,7 +2,7 @@ package br.com.brunno.bookstore.paymentFlow.validator;
 
 import br.com.brunno.bookstore.country.Country;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;
-import br.com.brunno.bookstore.paymentflow.validator.StateBelongToCountryValidator;
+import br.com.brunno.bookstore.paymentflow.webvalidator.StateBelongToCountryValidator;
 import br.com.brunno.bookstore.state.State;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;

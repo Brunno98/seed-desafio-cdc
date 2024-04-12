@@ -1,4 +1,4 @@
-package br.com.brunno.bookstore.paymentflow.validator;
+package br.com.brunno.bookstore.paymentflow.webvalidator;
 
 import br.com.brunno.bookstore.country.Country;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;

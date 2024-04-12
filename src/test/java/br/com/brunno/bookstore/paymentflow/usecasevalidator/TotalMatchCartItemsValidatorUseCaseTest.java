@@ -1,15 +1,13 @@
-package br.com.brunno.bookstore.paymentFlow.validator;
+package br.com.brunno.bookstore.paymentflow.usecasevalidator;
 
 import br.com.brunno.bookstore.author.Author;
 import br.com.brunno.bookstore.book.Book;
 import br.com.brunno.bookstore.book.BookRepository;
 import br.com.brunno.bookstore.category.Category;
-import br.com.brunno.bookstore.country.Country;
 import br.com.brunno.bookstore.paymentflow.NewPurchaseRequest;
 import br.com.brunno.bookstore.paymentflow.Order;
 import br.com.brunno.bookstore.paymentflow.OrderItem;
 import br.com.brunno.bookstore.paymentflow.webvalidator.TotalMatchCartItemsValidator;
-import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,19 +22,20 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 
-public class TotalMatchCartItemsValidatorTest {
+class TotalMatchCartItemsValidatorUseCaseTest {
 
     private final Author author = new Author("some author", "some.email@email.com", "some description");
     private final Category category = new Category("some category");
 
     BookRepository bookRepository = Mockito.mock(BookRepository.class);
 
-    TotalMatchCartItemsValidator totalMatchCartItemsValidator = new TotalMatchCartItemsValidator(bookRepository);
+    TotalMatchCartItemsValidatorUseCase totalMatchCartItemsValidator = new TotalMatchCartItemsValidatorUseCase(bookRepository);
 
     @DisplayName("o preço total deve estar de acordo com o valor do pedido")
     @ParameterizedTest
@@ -51,23 +50,11 @@ public class TotalMatchCartItemsValidatorTest {
         Order newOrder = createOrder(totalPrice, orderItem1, orderItem2);
         NewPurchaseRequest request = new NewPurchaseRequest();
         ReflectionTestUtils.setField(request, "order", newOrder);
-        Errors errors = new BeanPropertyBindingResult(request, "test");
+        AtomicBoolean invalid = new AtomicBoolean(false);
 
-        totalMatchCartItemsValidator.validate(request, errors);
+        totalMatchCartItemsValidator.validate(request, () -> invalid.set(true));
 
-        Assertions.assertThat(errors.hasErrors()).isEqualTo(expected);
-    }
-
-    @DisplayName("Se já existir erro, então não faz a validacao do preço total")
-    @Test
-    void hasErrors() {
-        NewPurchaseRequest request = new NewPurchaseRequest();
-        Errors errors = Mockito.mock(Errors.class);
-        doReturn(true).when(errors).hasErrors();
-
-        totalMatchCartItemsValidator.validate(request, errors);
-
-        Mockito.verify(bookRepository, never()).findById(Mockito.any());
+        Assertions.assertThat(invalid.get()).isEqualTo(expected);
     }
 
     private OrderItem createOrderItem(Integer bookId, Integer quantity) {
